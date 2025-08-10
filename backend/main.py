@@ -44,14 +44,6 @@ def recommend(user_input: UserInput):
             {"role": "user", "content": prompt}
         ]
     )
-    prompt = f'Extract up to 3 genres/keywords from: "{user_input.description}"'
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-20b:free", 
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ]
-    )
     criteria =  response.choices[0].message.content
     url = "https://api.themoviedb.org/3/search/movie"
     params = {"api_key":TMDB_API_KEY, "query":criteria}
