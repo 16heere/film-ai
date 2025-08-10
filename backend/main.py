@@ -15,7 +15,7 @@ TMDB_API_KEY   = os.getenv("TMDB_API_KEY")
 
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key="OPENROUTER_API_KEY",
+  api_key=AI_API_KEY,
 )
 
 app = FastAPI()
@@ -47,10 +47,16 @@ def recommend(user_input: UserInput):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ]
+    prompt = f'Extract up to 3 genres/keywords from: "{user_input.description}"'
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b:free", 
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
     )
     criteria =  response.choices[0].message.content
     url = "https://api.themoviedb.org/3/search/movie"
     params = {"api_key":TMDB_API_KEY, "query":criteria}
     res = requests.get(url, params=params).json().get("results", [])[:5]
     return [{"title":m["title"], "overview":m["overview"]} for m in res]
-
