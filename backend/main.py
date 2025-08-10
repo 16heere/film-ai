@@ -20,7 +20,7 @@ client = OpenAI(
 app = FastAPI()
 
 origins = [
-    "https://filmfinderai.netlify.app/",
+    "https://filmfinderai.netlify.app",
 ]
 
 app.add_middleware(
