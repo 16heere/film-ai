@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
-import openai, requests, os
+import requests, os
 from dotenv import load_dotenv
 import requests
 import os
@@ -10,12 +10,11 @@ import os
 # load .env (so OPENAI_API_KEY and TMDB_API_KEY are picked up)
 load_dotenv()
 
-AI_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 TMDB_API_KEY   = os.getenv("TMDB_API_KEY")
-
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key=AI_API_KEY,
+  api_key=OPENROUTER_API_KEY,
 )
 
 app = FastAPI()
@@ -23,8 +22,6 @@ app = FastAPI()
 origins = [
     "https://film-ai-l8uf.vercel.app",
     "https://film-ai-9jng.vercel.app",
-    # if you spin up yet another preview, add it here
-    # OR for testing you can use: "*"  (but be careful in production)
 ]
 
 app.add_middleware(
@@ -47,6 +44,7 @@ def recommend(user_input: UserInput):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ]
+    )
     prompt = f'Extract up to 3 genres/keywords from: "{user_input.description}"'
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b:free", 
